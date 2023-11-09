@@ -25,6 +25,7 @@ class I18n
         'autoSearch' => false,
         'countryCodeUpperCase' => true
     ];
+    private $langAlias = [];
 
     const DIR_SEP = DIRECTORY_SEPARATOR;
 
@@ -46,6 +47,11 @@ class I18n
         if (strlen($this->separator) != 1) {
             throw new InvalidLanguageCodeException('Invalid separator. It must be a single character.');
         }
+    }
+
+    public function setLangAlias(array $alias)
+    {
+        $this->langAlias = $alias;
     }
 
     public function initialize(string $language = null)
@@ -205,6 +211,25 @@ class I18n
         }
 
         return $allData;
+    }
+
+    public function fetchLangList()
+    {
+        $langDir = $this->langFilePath;
+        if (!is_dir($langDir)) {
+            throw new IOException('Language directory does not exist: {'.$langDir.'}');
+        }
+
+        $directories = glob($langDir.self::DIR_SEP.'*', GLOB_ONLYDIR);
+        $langList = [];
+        foreach ($directories as $dir) {
+            $langCode = basename($dir);
+            // Use alias if it exists; otherwise use language code
+            $alias = $this->langAlias[$langCode] ?? $langCode;
+            $langList[$langCode] = $alias;
+        }
+
+        return $langList;
     }
 
     private function getValue(string $lang, string $key)

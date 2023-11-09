@@ -8,6 +8,10 @@ A modern internationalization system featuring JSON-format language files and ef
 - Supports organization of translation keys by namespaces
 - Configurable translation file directory and cache directory
 
+## Requirements
+- PHP 7.2 or higher
+- Composer
+
 ## File Structure
 Here's an example of the expected file structure:
 ```
@@ -69,8 +73,17 @@ When accessing translations, the keys used must follow the format: `filename.key
 
 ## Advanced Usage
 Load specific language files:
-
 ```php
 // Set the list of language files to be loaded
 $i18n->setFileList(['general', 'greeting']);
+```
+
+Set language aliases:
+```php
+// Define aliases for languages
+$i18n->setLangAlias(array('en_US' => 'English', 'zh_TW' => '繁體中文'));
+
+// Fetch the list of languages with their aliases
+$aliasedLangList = $i18n->fetchLangList();
+// Outputs: array('en_US' => 'English', 'zh_TW' => '繁體中文')
 ```
