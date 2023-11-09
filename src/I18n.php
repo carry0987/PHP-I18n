@@ -233,8 +233,8 @@ class I18n
     {
         $keys = explode('.', $key);
         if (count($keys) < 2) {
-            // If the key does not specify the namespace of the file name, return null
-            throw new Exception\IOException('Language key must include namespace: '.$key);
+            // If the key does not specify the namespace of the file name, throw an error
+            throw new Exception\IOException('Language key must include a namespace: '.$key);
         }
 
         $fileKey = array_shift($keys); // Fetch the file name as namespace
@@ -246,16 +246,16 @@ class I18n
 
         // Try to load the language data for the corresponding file first
         $filePath = $this->langFilePath.self::DIR_SEP.$lang.self::DIR_SEP.$fileKey.'.json';
-        if (isset($this->languageData[$fileKey])) {
+        if (isset($this->languageData[$fileKey], $this->languageData[$fileKey][$translationKey])) {
             // If the language data has already been loaded, get the translation directly from the data structure
-            return $this->languageData[$fileKey][$translationKey] ?? null;
+            return $this->languageData[$fileKey][$translationKey];
         } elseif (file_exists($filePath)) {
             // If the language file has not been loaded yet, load it now and extract the translation
             $this->loadLanguageFile($filePath, $fileKey);
             return $this->languageData[$fileKey][$translationKey] ?? null;
         }
 
-        // If the file does not exist or the key does not exist, return null
+        // If the file does not exist or the key does not exist, throw an error
         throw new Exception\IOException('Unable to find the specified language key: '.$key);
     }
 
