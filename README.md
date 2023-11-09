@@ -75,7 +75,7 @@ When accessing translations, the keys used must follow the format: `filename.key
 Load specific language files:
 ```php
 // Set the list of language files to be loaded
-$i18n->setFileList(['general', 'greeting']);
+$i18n->setAllowedFiles(['general', 'greeting']);
 ```
 
 Set language aliases:

@@ -9,7 +9,7 @@ class I18n
 {
     private $cachePath;
     private $langFilePath;
-    private $fileList = [];
+    private $allowedFiles = [];
     private $defaultLang = 'en_US';
     private $currentLang;
     private $languageData = [];
@@ -67,9 +67,9 @@ class I18n
         $this->initialized = true;
     }
 
-    public function setFileList(array $files)
+    public function setAllowedFiles(array $files)
     {
-        $this->fileList = $files;
+        $this->allowedFiles = $files;
     }
 
     private function loadLanguageFile(string $filePath, string $fileName)
@@ -96,13 +96,10 @@ class I18n
         $files = glob($directory.self::DIR_SEP.'*.json');
         foreach ($files as $file) {
             $fileName = basename($file, '.json');
-            if (!empty($this->fileList)) {
-                if (!in_array($fileName, $this->fileList)) {
-                    // If the file name is not in the list, throw an error directly
-                    throw new IOException('Language file {'.$fileName.'} not in the specified file list.');
-                }
-                $this->loadLanguageFile($file, $fileName);
+            if (!empty($this->allowedFiles) && !in_array($fileName, $this->allowedFiles)) {
+                throw new IOException('Language file {'.$fileName.'} not in the specified file list.');
             }
+            $this->loadLanguageFile($file, $fileName);
         }
     }
 
@@ -175,9 +172,9 @@ class I18n
             throw new InitializationException('I18n class must be initialized before using fetchAll().');
         }
 
-        // Fetch all language files if both the argument and $this->fileList are empty
+        // Fetch all language files if both the argument and $this->allowedFiles are empty
         if (empty($fileList)) {
-            if (empty($this->fileList)) {
+            if (empty($this->allowedFiles)) {
                 // Load all files in the language directory
                 $directory = $this->langFilePath.self::DIR_SEP.$this->currentLang;
                 $files = glob($directory.self::DIR_SEP.'*.json');
@@ -186,12 +183,12 @@ class I18n
                     $fileList[] = $fileName;
                 }
             } else {
-                // Use $this->fileList if it's not empty
-                $fileList = $this->fileList;
+                // Use $this->allowedFiles if it's not empty
+                $fileList = $this->allowedFiles;
             }
         } else {
-            // Intersect with $this->fileList if it's not empty
-            $fileList = (empty($this->fileList)) ? $fileList : array_intersect($fileList, $this->fileList);
+            // Intersect with $this->allowedFiles if it's not empty
+            $fileList = (empty($this->allowedFiles)) ? $fileList : array_intersect($fileList, $this->allowedFiles);
         }
 
         $allData = [];
@@ -241,7 +238,7 @@ class I18n
         }
 
         $fileKey = array_shift($keys); // Fetch the file name as namespace
-        if (!empty($this->fileList) && !in_array($fileKey, $this->fileList)) {
+        if (!empty($this->allowedFiles) && !in_array($fileKey, $this->allowedFiles)) {
             // If the namespace is not in the file list, throw an error directly
             throw new Exception\IOException('Namespace {'.$fileKey.'} is not in the specified file list.');
         }
@@ -320,7 +317,7 @@ class I18n
         foreach ($dirs as $dir) {
             $tmp = $tmp.$dir.self::DIR_SEP;
             if (!file_exists($tmp) && !mkdir($tmp, 0755, true)) {
-                return $tmp;
+                throw new IOException('Unable to create directory '.$tmp);
             }
         }
 
