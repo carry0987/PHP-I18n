@@ -1,2 +1,3 @@
 cache/ export-ignore
+lang/ export-ignore
 example.php export-ignore
