@@ -163,12 +163,56 @@ class I18n
         return $value;
     }
 
+    public function fetchList(array $fileList = [])
+    {
+        if (!$this->initialized) {
+            throw new InitializationException('I18n class must be initialized before using fetchAll().');
+        }
+
+        // Fetch all language files if both the argument and $this->fileList are empty
+        if (empty($fileList)) {
+            if (empty($this->fileList)) {
+                // Load all files in the language directory
+                $directory = $this->langFilePath.self::DIR_SEP.$this->currentLang;
+                $files = glob($directory.self::DIR_SEP.'*.json');
+                foreach ($files as $file) {
+                    $fileName = basename($file, '.json');
+                    $fileList[] = $fileName;
+                }
+            } else {
+                // Use $this->fileList if it's not empty
+                $fileList = $this->fileList;
+            }
+        } else {
+            // Intersect with $this->fileList if it's not empty
+            $fileList = (empty($this->fileList)) ? $fileList : array_intersect($fileList, $this->fileList);
+        }
+
+        $allData = [];
+        foreach ($fileList as $fileName) {
+            $filePath = $this->langFilePath.self::DIR_SEP.$this->currentLang.self::DIR_SEP.$fileName.'.json';
+            if (isset($this->languageData[$fileName])) {
+                // If the language data has already been loaded, use it directly
+                $allData[$fileName] = $this->languageData[$fileName];
+            } elseif (file_exists($filePath)) {
+                // Load the language file data and add it to the allData array
+                $this->loadLanguageFile($filePath, $fileName);
+                $allData[$fileName] = $this->languageData[$fileName];
+            } else {
+                // If the file does not exist, add empty data for the file
+                $allData[$fileName] = [];
+            }
+        }
+
+        return $allData;
+    }
+
     private function getValue(string $lang, string $key)
     {
         $keys = explode('.', $key);
         if (count($keys) < 2) {
             // If the key does not specify the namespace of the file name, return null
-            throw new Exception\IOException('Language key must include namespace: ' . $key);
+            throw new Exception\IOException('Language key must include namespace: '.$key);
         }
 
         $fileKey = array_shift($keys); // Fetch the file name as namespace
@@ -179,7 +223,7 @@ class I18n
         $translationKey = implode('.', $keys); // Combine the remaining key path
 
         // Try to load the language data for the corresponding file first
-        $filePath = $this->langFilePath . self::DIR_SEP . $lang . self::DIR_SEP . $fileKey . '.json';
+        $filePath = $this->langFilePath.self::DIR_SEP.$lang.self::DIR_SEP.$fileKey.'.json';
         if (isset($this->languageData[$fileKey])) {
             // If the language data has already been loaded, get the translation directly from the data structure
             return $this->languageData[$fileKey][$translationKey] ?? null;
@@ -190,7 +234,7 @@ class I18n
         }
 
         // If the file does not exist or the key does not exist, return null
-        throw new Exception\IOException('Unable to find the specified language key: ' . $key);
+        throw new Exception\IOException('Unable to find the specified language key: '.$key);
     }
 
     private function validateLanguageFolder(string $folder)

@@ -16,6 +16,9 @@ try {
     $i18n = new I18n($config);
     $i18n->initialize('zh_TW');
     echo $i18n->fetch('greeting.hello');
+    echo "\n", '<pre>';
+    var_export($i18n->fetchList());
+    echo '</pre>';
 } catch (\carry0987\I18n\Exception\IOException $e) {
     echo "IO Exception: " . $e->getMessage();
 } catch (\carry0987\I18n\Exception\InitializationException $e) {

@@ -38,7 +38,6 @@ composer require carry0987/i18n
 
 ## Usage
 After installation, you can include the `I18n` class in your project with Composer's autoloading:
-
 ```php
 require_once 'vendor/autoload.php';
 
@@ -54,10 +53,15 @@ $i18n->initialize('en_US'); // 'en_US' is the language code
 ```
 
 Fetch translations:
-
 ```php
 // Use file name and key to get the translation value
 echo $i18n->fetch('greeting.hello'); // Outputs: "Hello"
+```
+
+Fetch multiple translations:
+```php
+// Get multiple translations in the current language
+$translations = $i18n->fetchList(); // Empty parameter returns all translations
 ```
 
 ## Note
