@@ -34,7 +34,7 @@ class I18n
         return $this->setOptions($option);
     }
 
-    private function setOptions(array $options)
+    public function setOptions(array $options)
     {
         $options = array_merge($this->defaultOptions, $options);
         $this->defaultLang = $options['defaultLang'];
@@ -47,11 +47,6 @@ class I18n
         if (strlen($this->separator) != 1) {
             throw new InvalidLanguageCodeException('Invalid separator. It must be a single character.');
         }
-    }
-
-    public function setLangAlias(array $alias)
-    {
-        $this->langAlias = $alias;
     }
 
     public function initialize(string $language = null)
@@ -67,9 +62,91 @@ class I18n
         $this->initialized = true;
     }
 
+    public function setLangAlias(array $alias)
+    {
+        $this->langAlias = $alias;
+    }
+
     public function setAllowedFiles(array $files)
     {
         $this->allowedFiles = $files;
+    }
+
+    public function fetch(string $key)
+    {
+        if (!$this->initialized) {
+            throw new InitializationException('I18n class must be initialized before using fetch().');
+        }
+        $value = $this->getValue($this->currentLang, $key);
+
+        if ($value === null && $this->autoSearch && $this->currentLang !== $this->defaultLang) {
+            $value = $this->getValue($this->defaultLang, $key);
+        }
+
+        return $value;
+    }
+
+    public function fetchList(array $fileList = [])
+    {
+        if (!$this->initialized) {
+            throw new InitializationException('I18n class must be initialized before using fetchAll().');
+        }
+
+        // Fetch all language files if both the argument and $this->allowedFiles are empty
+        if (empty($fileList)) {
+            if (empty($this->allowedFiles)) {
+                // Load all files in the language directory
+                $directory = $this->langFilePath.self::DIR_SEP.$this->currentLang;
+                $files = glob($directory.self::DIR_SEP.'*.json');
+                foreach ($files as $file) {
+                    $fileName = basename($file, '.json');
+                    $fileList[] = $fileName;
+                }
+            } else {
+                // Use $this->allowedFiles if it's not empty
+                $fileList = $this->allowedFiles;
+            }
+        } else {
+            // Intersect with $this->allowedFiles if it's not empty
+            $fileList = (empty($this->allowedFiles)) ? $fileList : array_intersect($fileList, $this->allowedFiles);
+        }
+
+        $allData = [];
+        foreach ($fileList as $fileName) {
+            $filePath = $this->langFilePath.self::DIR_SEP.$this->currentLang.self::DIR_SEP.$fileName.'.json';
+            if (isset($this->languageData[$fileName])) {
+                // If the language data has already been loaded, use it directly
+                $allData[$fileName] = $this->languageData[$fileName];
+            } elseif (file_exists($filePath)) {
+                // Load the language file data and add it to the allData array
+                $this->loadLanguageFile($filePath, $fileName);
+                $allData[$fileName] = $this->languageData[$fileName];
+            } else {
+                // If the file does not exist, add empty data for the file
+                $allData[$fileName] = [];
+            }
+        }
+
+        return $allData;
+    }
+
+    public function fetchLangList()
+    {
+        $langDir = $this->langFilePath;
+        if (!is_dir($langDir)) {
+            throw new IOException('Language directory does not exist: {'.$langDir.'}');
+        }
+
+        $directories = glob($langDir.self::DIR_SEP.'*', GLOB_ONLYDIR);
+        $langList = [];
+        foreach ($directories as $dir) {
+            $langCode = basename($dir);
+            // Use alias if it exists; otherwise use language code
+            $alias = $this->langAlias[$langCode] ?? $langCode;
+            $langList[$langCode] = $alias;
+        }
+
+        return $langList;
     }
 
     private function loadLanguageFile(string $filePath, string $fileName)
@@ -153,83 +230,6 @@ class I18n
         if (file_put_contents($cacheFileName, $cacheData) === false) {
             throw new IOException('Unable to write cache file {'.$cacheFileName.'}.');
         }
-    }
-
-    public function fetch(string $key)
-    {
-        if (!$this->initialized) {
-            throw new InitializationException('I18n class must be initialized before using fetch().');
-        }
-        $value = $this->getValue($this->currentLang, $key);
-
-        if ($value === null && $this->autoSearch && $this->currentLang !== $this->defaultLang) {
-            $value = $this->getValue($this->defaultLang, $key);
-        }
-
-        return $value;
-    }
-
-    public function fetchList(array $fileList = [])
-    {
-        if (!$this->initialized) {
-            throw new InitializationException('I18n class must be initialized before using fetchAll().');
-        }
-
-        // Fetch all language files if both the argument and $this->allowedFiles are empty
-        if (empty($fileList)) {
-            if (empty($this->allowedFiles)) {
-                // Load all files in the language directory
-                $directory = $this->langFilePath.self::DIR_SEP.$this->currentLang;
-                $files = glob($directory.self::DIR_SEP.'*.json');
-                foreach ($files as $file) {
-                    $fileName = basename($file, '.json');
-                    $fileList[] = $fileName;
-                }
-            } else {
-                // Use $this->allowedFiles if it's not empty
-                $fileList = $this->allowedFiles;
-            }
-        } else {
-            // Intersect with $this->allowedFiles if it's not empty
-            $fileList = (empty($this->allowedFiles)) ? $fileList : array_intersect($fileList, $this->allowedFiles);
-        }
-
-        $allData = [];
-        foreach ($fileList as $fileName) {
-            $filePath = $this->langFilePath.self::DIR_SEP.$this->currentLang.self::DIR_SEP.$fileName.'.json';
-            if (isset($this->languageData[$fileName])) {
-                // If the language data has already been loaded, use it directly
-                $allData[$fileName] = $this->languageData[$fileName];
-            } elseif (file_exists($filePath)) {
-                // Load the language file data and add it to the allData array
-                $this->loadLanguageFile($filePath, $fileName);
-                $allData[$fileName] = $this->languageData[$fileName];
-            } else {
-                // If the file does not exist, add empty data for the file
-                $allData[$fileName] = [];
-            }
-        }
-
-        return $allData;
-    }
-
-    public function fetchLangList()
-    {
-        $langDir = $this->langFilePath;
-        if (!is_dir($langDir)) {
-            throw new IOException('Language directory does not exist: {'.$langDir.'}');
-        }
-
-        $directories = glob($langDir.self::DIR_SEP.'*', GLOB_ONLYDIR);
-        $langList = [];
-        foreach ($directories as $dir) {
-            $langCode = basename($dir);
-            // Use alias if it exists; otherwise use language code
-            $alias = $this->langAlias[$langCode] ?? $langCode;
-            $langList[$langCode] = $alias;
-        }
-
-        return $langList;
     }
 
     private function getValue(string $lang, string $key)
