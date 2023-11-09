@@ -304,23 +304,26 @@ class I18n
 
     private static function makePath(string $path)
     {
-        $dirs = explode(self::DIR_SEP, dirname(self::trimPath($path)));
-        if (empty($dirs[0])) {
-            $dirs[0] = self::DIR_SEP;
-        }
-        // Check if $dirs[0] is a directory and is writable
-        if (!is_dir($dirs[0]) || !is_writable($dirs[0])) {
-            throw new IOException('Directory {'.$dirs[0].'} is not writable.');
-        }
-
-        $tmp = '';
-        foreach ($dirs as $dir) {
-            $tmp = $tmp.$dir.self::DIR_SEP;
-            if (!file_exists($tmp) && !mkdir($tmp, 0755, true)) {
-                throw new IOException('Unable to create directory '.$tmp);
+        $path = self::trimPath($path); // Ensure path format is consistent.
+        $isAbsolute = (strpos($path, self::DIR_SEP) === 0); // Determine if it's an absolute path.
+        // Handle both absolute and relative paths.
+        $currentPath = $isAbsolute ? self::DIR_SEP : '';
+        // Split the path into individual parts.
+        $parts = array_filter(explode(self::DIR_SEP, $path), 'strlen');
+        // Loop through parts to create directories.
+        foreach ($parts as $part) {
+            if ($part === '..') {
+                // If it's a parent directory indicator, move to the parent of the current path.
+                $currentPath = dirname($currentPath);
+            } else {
+                // Otherwise, it's a directory and we should attempt to create it.
+                $currentPath .= $part . self::DIR_SEP;
+                if (!is_dir($currentPath) && !mkdir($currentPath, 0755, true)) {
+                    throw new IOException('Unable to create directory ' . $currentPath);
+                }
             }
         }
 
-        return true;
+        return true; // Return true if all directories have been successfully created or already exist.
     }
 }
