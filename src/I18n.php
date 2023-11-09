@@ -19,6 +19,8 @@ class I18n
     private $autoSearch;
     private $defaultOptions = [
         'defaultLang' => 'en_US',
+        'langFilePath' => null,
+        'cachePath' => null,
         'separator' => '_',
         'autoSearch' => false,
         'countryCodeUpperCase' => true
