@@ -96,6 +96,9 @@ class I18n
         $files = glob($directory.self::DIR_SEP.'*.json');
         foreach ($files as $file) {
             $fileName = basename($file, '.json');
+            if (substr_count($fileName, '.') > 0) {
+                throw new IOException('Invalid file name. The file names should not contain more than one dot: {'.$fileName.'}');
+            }
             if (!empty($this->allowedFiles) && !in_array($fileName, $this->allowedFiles)) {
                 throw new IOException('Language file {'.$fileName.'} not in the specified file list.');
             }
