@@ -27,6 +27,8 @@ try {
     echo '<h2>Fetch \'hello\' from \'greeting.json\'</h2>';
     echo $i18n->fetch('greeting.hello');
     echo $i18n->fetch('greeting.world');
+    echo '<h2>Fetch Current Language</h2>';
+    echo $i18n->fetchCurrentLang();
     echo '<h2>Fetch List</h2>';
     echo "\n", '<pre>';
     var_export($i18n->fetchList());

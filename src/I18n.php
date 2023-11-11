@@ -92,6 +92,15 @@ class I18n
         return $this->languageCodeValidator->getLanguageList();
     }
 
+    public function fetchCurrentLang()
+    {
+        if (!$this->initialized) {
+            throw new InitializationException('I18n class must be initialized before using fetchCurrentLang().');
+        }
+
+        return $this->currentLang;
+    }
+
     private function validateLanguageFolder(string $folder)
     {
         $folderPath = self::$option['langFilePath'].self::DIR_SEP.$folder;
