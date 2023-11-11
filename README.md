@@ -25,10 +25,7 @@ Here's an example of the expected file structure:
 │       ├── general.json
 │       └── greeting.json
 ├── src
-│   ├── Exception
-│   │   ├── IOException.php
-│   │   ├── InitializationException.php
-│   │   └── InvalidLanguageCodeException.php
+│   ├── /...
 │   └── I18n.php
 └── vendor
 ```
