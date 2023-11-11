@@ -4,17 +4,25 @@ require_once 'vendor/autoload.php';
 use carry0987\I18n\I18n;
 
 $config = array(
+    'useAutoDetect' => true,
     'langFilePath' => 'lang',
     'cachePath' => 'cache',
     'defaultLang' => 'en_US',
     'separator' => '_',
     'autoSearch' => true,
-    'countryCodeUpperCase' => true
+    'countryCodeUpperCase' => true,
+    'cookie' => array(
+        'name' => 'lang',
+        'expire' => time()+864000,
+        'path' => '/',
+        'domain' => '',
+        'secure' => true,
+        'httponly' => true
+    )
 );
 
 try {
     $i18n = new I18n($config);
-    $i18n->initialize('zh_TW');
     $i18n->setLangAlias(array('en_US' => 'English', 'zh_TW' => '繁體中文'));
     echo '<h2>Fetch \'hello\' from \'greeting.json\'</h2>';
     echo $i18n->fetch('greeting.hello');

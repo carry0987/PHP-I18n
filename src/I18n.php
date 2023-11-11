@@ -10,6 +10,7 @@ class I18n
     private $cachePath;
     private $langFilePath;
     private $allowedFiles = [];
+    private $useAutoDetect;
     private $defaultLang = 'en_US';
     private $currentLang;
     private $languageData = [];
@@ -18,31 +19,54 @@ class I18n
     private $separator;
     private $autoSearch;
     private $defaultOptions = [
+        'useAutoDetect' => false,
         'defaultLang' => 'en_US',
         'langFilePath' => null,
         'cachePath' => null,
         'separator' => '_',
         'autoSearch' => false,
-        'countryCodeUpperCase' => true
+        'countryCodeUpperCase' => true,
+        'cookie' => []
     ];
     private $langAlias = [];
+
+    private static $cookieConfig = array(
+        'name' => 'lang',
+        'expire' => 0,
+        'path' => '/',
+        'domain' => '',
+        'secure' => true,
+        'httponly' => true
+    );
 
     const DIR_SEP = DIRECTORY_SEPARATOR;
 
     public function __construct(array $option = [])
     {
-        return $this->setOptions($option);
+        $this->setOptions($option);
+        if ($this->useAutoDetect) {
+            // Set language automatically based on browser settings
+            $this->setLanguageAutomatically();
+        }
+
+        return $this;
     }
 
     public function setOptions(array $options)
     {
         $options = array_merge($this->defaultOptions, $options);
+        $this->useAutoDetect = $options['useAutoDetect'];
         $this->defaultLang = $options['defaultLang'];
         $this->langFilePath = isset($options['langFilePath']) ? self::trimPath($options['langFilePath']) : null;
         $this->cachePath = isset($options['cachePath']) ? self::trimPath($options['cachePath']) : null;
         $this->separator = $options['separator'];
         $this->autoSearch = $options['autoSearch'];
         $this->countryCodeUpperCase = $options['countryCodeUpperCase'];
+
+        // Set cookie options
+        if (!empty($options['cookie'])) {
+            self::setCustomCookie($options['cookie']);
+        }
         // Make sure separator is a single character
         if (strlen($this->separator) != 1) {
             throw new InvalidLanguageCodeException('Invalid separator. It must be a single character.');
@@ -291,6 +315,50 @@ class I18n
         return '/^'.$languagePart.$separatorQuoted.$countryPart.'$/';
     }
 
+    private function setLanguageCookie(string $lang)
+    {
+        $config = self::$cookieConfig;
+
+        return setcookie($config['name'], $lang, $config['expire'], $config['path'], $config['domain'], $config['secure'], $config['httponly']);
+    }
+
+    private function formatAcceptLanguage(string $acceptLanguage)
+    {
+        if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $acceptLanguage)) {
+            return $acceptLanguage;
+        }
+        $langs = explode(',', $acceptLanguage);
+        $primaryLang = explode(';', $langs[0])[0];
+        $parts = explode('-', $primaryLang);
+        if (count($parts) === 2) {
+            return strtolower($parts[0]) . '_' . strtoupper($parts[1]);
+        }
+
+        return $this->defaultLang;
+    }
+
+    private function setLanguageAutomatically()
+    {
+        $language = $this->defaultLang;
+
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && !isset($_COOKIE[self::$cookieConfig['name']])) {
+            $browserLang = $this->formatAcceptLanguage($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            if ($this->isLanguageSupported($browserLang)) {
+                $language = $browserLang;
+            }
+            $this->setLanguageCookie($language);
+        } elseif (isset($_COOKIE[self::$cookieConfig['name']]) && $this->isLanguageSupported($_COOKIE[self::$cookieConfig['name']])) {
+            $language = $_COOKIE[self::$cookieConfig['name']];
+        }
+
+        $this->initialize($language);
+    }
+
+    private function isLanguageSupported(string $lang)
+    {
+        return preg_match($this->getLanguagePattern(), $lang) && in_array($lang, $this->fetchLangList());
+    }
+
     private function formatLanguageCode(string $code)
     {
         $parts = explode($this->separator, $code);
@@ -298,6 +366,13 @@ class I18n
         $parts[1] = $this->countryCodeUpperCase ? strtoupper($parts[1]) : strtolower($parts[1]);
 
         return implode($this->separator, $parts);
+    }
+
+    private static function setCustomCookie(array $config)
+    {
+        self::$cookieConfig = array_merge(self::$cookieConfig, $config);
+
+        return self::$cookieConfig;
     }
 
     private static function trimPath(string $path)

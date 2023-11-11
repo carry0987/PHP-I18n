@@ -48,12 +48,10 @@ require_once 'vendor/autoload.php';
 use carry0987\I18n\I18n;
 
 $i18n = new I18n([
+    'useAutoDetect' => true, // By default, the language is automatically detected
     'langFilePath' => 'path/to/lang', 
     'cachePath' => 'path/to/cache'
 ]);
-
-// Initialize the language settings
-$i18n->initialize('en_US'); // 'en_US' is the language code
 ```
 
 Fetch translations:
@@ -72,6 +70,32 @@ $translations = $i18n->fetchList(); // Empty parameter returns all translations
 When accessing translations, the keys used must follow the format: `filename.key`, which ensures that each translation value is extracted from the specified file.
 
 ## Advanced Usage
+If set `useAutoDetect` to `true`, the language will be automatically detected from the browser's `Accept-Language` header. If the language is not supported, the default language will be used. Also, if you want to change cookie settings, you can set the `cookie` option:
+```php
+$config = array(
+    'useAutoDetect' => true,
+    //...
+    'cookie' => array(
+        'name' => 'lang',
+        'expire' => time()+864000,
+        'path' => '/',
+        'domain' => '',
+        'secure' => true,
+        'httponly' => true
+    )
+);
+```
+
+You can set the language code manually:
+```php
+$i18n = new I18n([
+    'useAutoDetect' => false, // Set useAutoDetect to false to disable automatic language detection
+    //...
+]);
+// Initialize the language settings
+$i18n->initialize('en_US'); // 'en_US' is the language code
+```
+
 Load specific language files:
 ```php
 // Set the list of language files to be loaded
