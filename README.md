@@ -98,8 +98,10 @@ $i18n->initialize('en_US'); // 'en_US' is the language code
 
 Load specific language files:
 ```php
-// Set the list of language files to be loaded
-$i18n->setAllowedFiles(['general', 'greeting']);
+$i18n = new I18n([
+    'allowedFiles' => ['general', 'greeting'], // Set the list of language files to be loaded
+    //...
+]);
 ```
 
 Set language aliases:
