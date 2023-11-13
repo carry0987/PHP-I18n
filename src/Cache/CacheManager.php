@@ -2,7 +2,6 @@
 namespace carry0987\I18n\Cache;
 
 use carry0987\I18n\I18n;
-use carry0987\I18n\Language\LanguageLoader;
 use carry0987\I18n\Exception\IOException;
 
 class CacheManager
