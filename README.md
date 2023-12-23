@@ -9,7 +9,6 @@ A modern internationalization system featuring JSON-format language files and ef
 - Configurable translation file directory and cache directory
 
 ## Requirements
-- PHP 7.2 or higher
 - Composer
 
 ## File Structure
