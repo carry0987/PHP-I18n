@@ -4,10 +4,10 @@
     "keywords": ["i18n", "php-i18n", "language"],
     "type": "library",
     "require": {
-        "php": ">=7.2"
+        "php": ">=8.0"
     },
     "require-dev": {
-        "php": ">=7.2"
+        "php": ">=8.0"
     },
     "license": "MIT",
     "autoload": {
