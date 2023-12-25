@@ -38,6 +38,7 @@ class Config
         self::$config['countryCodeUpperCase'] = $options['countryCodeUpperCase'];
 
         // Set cookie options
+        self::$config['cookie'] = self::$cookieConfig;
         if (!empty($options['cookie'])) {
             self::$config['cookie'] = self::setCookieConfig($options['cookie']);
         }
@@ -47,7 +48,7 @@ class Config
         }
     }
 
-    public static function getOptions(string $key = null, mixed $default = null)
+    public static function getOptions(string $key = null, $default = null)
     {
         if ($key) {
             return self::$config[$key] ?? $default;
