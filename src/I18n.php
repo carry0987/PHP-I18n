@@ -120,24 +120,36 @@ class I18n
     {
         $path = self::trimPath($path); // Ensure path format is consistent.
         $isAbsolute = (strpos($path, self::DIR_SEP) === 0); // Determine if it's an absolute path.
-        // Handle both absolute and relative paths.
-        $currentPath = $isAbsolute ? self::DIR_SEP : '';
-        // Split the path into individual parts.
-        $parts = array_filter(explode(self::DIR_SEP, $path), 'strlen');
+        $currentPath = $isAbsolute ? self::DIR_SEP : ''; // Handle both absolute and relative paths.
+        $parts = array_filter(explode(self::DIR_SEP, $path), 'strlen'); // Split the path into individual parts.
+        $pathStack = [];
+
         // Loop through parts to create directories.
         foreach ($parts as $part) {
             if ($part === '..') {
-                // If it's a parent directory indicator, move to the parent of the current path.
-                $currentPath = dirname($currentPath);
-            } else {
-                // Otherwise, it's a directory and we should attempt to create it.
-                $currentPath .= $part.self::DIR_SEP;
-                if (!is_dir($currentPath) && !mkdir($currentPath, 0755, true)) {
-                    throw new IOException('Unable to create directory '.$currentPath);
+                // If it's a parent directory indicator, pop the last element from the stack
+                // unless the stack is empty which means we are at the root for absolute paths.
+                if (!empty($pathStack)) {
+                    array_pop($pathStack);
+                } elseif (!$isAbsolute) {
+                    // Append .. parts to stack if path is relative.
+                    $pathStack[] = $part;
                 }
+                // If the path is absolute and the stack is empty, no action is needed since we are at the root.
+            } elseif ($part !== '.') {
+                // Skip the current directory indicator '.' as it has no effect on the path.
+                $pathStack[] = $part; // Push the current part to the stack.
             }
         }
 
-        return true; // Return true if all directories have been successfully created or already exist.
+        // Reconstruct path from the stack.
+        $currentPath .= implode(self::DIR_SEP, $pathStack);
+
+        // Ensure the directory exists.
+        if (!is_dir($currentPath) && !mkdir($currentPath, 0755, true)) {
+            throw new IOException('Unable to create directory '.$currentPath);
+        }
+
+        return true; // Return true if the directory has been successfully created or already exists.
     }
 }
