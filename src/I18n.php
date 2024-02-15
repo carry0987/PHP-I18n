@@ -59,6 +59,15 @@ class I18n
         $this->languageCodeValidator->setLangAlias($alias);
     }
 
+    public function getLangAlias()
+    {
+        if (!$this->initialized) {
+            throw new InitializationException('I18n class must be initialized before using getLangAlias().');
+        }
+
+        return $this->fetchLangList();
+    }
+
     public function fetch(string $key)
     {
         if (!$this->initialized) {
