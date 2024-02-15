@@ -54,12 +54,14 @@ class I18n
         $this->initialized = true;
     }
 
-    public function setLangAlias(array $alias)
+    public function setLangAlias(array $alias): self
     {
         $this->languageCodeValidator->setLangAlias($alias);
+
+        return $this;
     }
 
-    public function getLangAlias()
+    public function getLangAlias(): array
     {
         if (!$this->initialized) {
             throw new InitializationException('I18n class must be initialized before using getLangAlias().');
@@ -68,7 +70,7 @@ class I18n
         return $this->fetchLangList();
     }
 
-    public function fetch(string $key)
+    public function fetch(string $key): ?string
     {
         if (!$this->initialized) {
             throw new InitializationException('I18n class must be initialized before using fetch().');
@@ -83,7 +85,7 @@ class I18n
         return $value;
     }
 
-    public function fetchList(array $fileList = [])
+    public function fetchList(array $fileList = []): array
     {
         if (!$this->initialized) {
             throw new InitializationException('I18n class must be initialized before using fetchList().');
@@ -92,7 +94,7 @@ class I18n
         return $this->languageLoader->getAllValues($fileList);
     }
 
-    public function fetchLangList()
+    public function fetchLangList(): array
     {
         if (!$this->initialized) {
             throw new InitializationException('I18n class must be initialized before using fetchLangList().');
@@ -101,7 +103,7 @@ class I18n
         return $this->languageCodeValidator->getLanguageList();
     }
 
-    public function fetchCurrentLang()
+    public function fetchCurrentLang(): string
     {
         if (!$this->initialized) {
             throw new InitializationException('I18n class must be initialized before using fetchCurrentLang().');
@@ -110,7 +112,7 @@ class I18n
         return $this->currentLang;
     }
 
-    private function validateLanguageFolder(string $folder)
+    private function validateLanguageFolder(string $folder): string
     {
         $folderPath = self::$option['langFilePath'].self::DIR_SEP.$folder;
         if (!is_dir($folderPath)) {
@@ -120,12 +122,12 @@ class I18n
         return $folder;
     }
 
-    public static function trimPath(string $path)
+    public static function trimPath(string $path): string
     {
         return str_replace(array('/', '\\', '//', '\\\\'), self::DIR_SEP, $path);
     }
 
-    public static function makePath(string $path)
+    public static function makePath(string $path): bool
     {
         $path = self::trimPath($path); // Ensure path format is consistent.
         $isAbsolute = (strpos($path, self::DIR_SEP) === 0); // Determine if it's an absolute path.

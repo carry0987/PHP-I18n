@@ -8,11 +8,11 @@ use carry0987\I18n\Exception\IOException;
 
 class LanguageLoader
 {
-    private $langFilePath;
-    private $cachePath;
-    private $allowedFiles;
-    private $languageData = [];
-    private static $currentLang;
+    private string $langFilePath;
+    private string $cachePath;
+    private array $allowedFiles;
+    private array $languageData = [];
+    private static string $currentLang;
 
     public function __construct(Config $config)
     {
@@ -21,12 +21,14 @@ class LanguageLoader
         $this->allowedFiles = $config->getOptions('allowedFiles');
     }
 
-    public function setCurrentLang(string $lang)
+    public function setCurrentLang(string $lang): self
     {
         self::$currentLang = $lang;
+
+        return $this;
     }
 
-    public function loadLanguageFile(string $filePath, string $fileName)
+    public function loadLanguageFile(string $filePath, string $fileName): void
     {
         if (file_exists($filePath)) {
             $jsonData = file_get_contents($filePath);
@@ -44,7 +46,7 @@ class LanguageLoader
         }
     }
 
-    public function loadLanguageData()
+    public function loadLanguageData(): void
     {
         $directory = $this->langFilePath.I18n::DIR_SEP.self::$currentLang;
         if (!is_dir($directory)) {
@@ -66,12 +68,12 @@ class LanguageLoader
         }
     }
 
-    public function getLanguageData()
+    public function getLanguageData(): array
     {
         return $this->languageData;
     }
 
-    public function getValue(string $lang, string $key)
+    public function getValue(string $lang, string $key): string
     {
         $keys = explode('.', $key);
         if (count($keys) < 2) {
@@ -101,7 +103,7 @@ class LanguageLoader
         throw new IOException('Unable to find the specified language key: '.$key);
     }
 
-    public function getAllValues(array $fileList)
+    public function getAllValues(array $fileList): array
     {
         // Fetch all language files if both the argument and $this->allowedFiles are empty
         if (empty($fileList)) {
@@ -141,7 +143,7 @@ class LanguageLoader
         return $allData;
     }
 
-    private function loadAllLanguageFiles()
+    private function loadAllLanguageFiles(): void
     {
         $directory = $this->langFilePath.I18n::DIR_SEP.self::$currentLang;
         $files = glob($directory.I18n::DIR_SEP.'*.json');

@@ -26,7 +26,7 @@ class Config
     );
     private static $config = array();
 
-    public static function setOptions(array $options)
+    public static function setOptions(array $options): void
     {
         $options = array_merge(self::$defaultOptions, $options);
         self::$config['useAutoDetect'] = $options['useAutoDetect'];
@@ -48,7 +48,7 @@ class Config
         }
     }
 
-    public static function getOptions(string $key = null, mixed $default = null)
+    public static function getOptions(string $key = null, mixed $default = null): mixed
     {
         if ($key) {
             return self::$config[$key] ?? $default;
@@ -57,7 +57,7 @@ class Config
         return self::$config;
     }
 
-    private static function setCookieConfig(array $config)
+    private static function setCookieConfig(array $config): array
     {
         self::$cookieConfig = array_merge(self::$cookieConfig, $config);
 

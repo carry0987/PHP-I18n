@@ -8,11 +8,11 @@ use carry0987\I18n\Exception\InvalidLanguageCodeException;
 
 class LanguageCodeValidator
 {
-    private $separator;
-    private $countryCodeUpperCase;
-    private $defaultLang;
-    private $langFilePath;
-    private $langAlias;
+    private string $separator;
+    private bool $countryCodeUpperCase;
+    private string $defaultLang;
+    private string $langFilePath;
+    private array $langAlias;
 
     public function __construct(Config $config)
     {
@@ -22,12 +22,14 @@ class LanguageCodeValidator
         $this->langFilePath = $config->getOptions('langFilePath');
     }
 
-    public function setLangAlias(array $alias)
+    public function setLangAlias(array $alias): self
     {
         $this->langAlias = $alias;
+
+        return $this;
     }
 
-    public function validateLanguageCode(string $code)
+    public function validateLanguageCode(string $code): string
     {
         $pattern = $this->getLanguagePattern();
         if (!preg_match($pattern, $code)) {
@@ -37,7 +39,7 @@ class LanguageCodeValidator
         return $this->formatLanguageCode($code);
     }
 
-    public function formatAcceptLanguage(string $acceptLanguage)
+    public function formatAcceptLanguage(string $acceptLanguage): string
     {
         if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $acceptLanguage)) {
             return $acceptLanguage;
@@ -52,12 +54,12 @@ class LanguageCodeValidator
         return $this->defaultLang;
     }
 
-    public function isLanguageSupported(string $lang)
+    public function isLanguageSupported(string $lang): bool
     {
         return preg_match($this->getLanguagePattern(), $lang) && in_array($lang, $this->getLanguageList());
     }
 
-    public function getLanguageList()
+    public function getLanguageList(): array
     {
         $langDir = $this->langFilePath;
         if (!is_dir($langDir)) {
@@ -76,7 +78,7 @@ class LanguageCodeValidator
         return $langList;
     }
 
-    private function getLanguagePattern()
+    private function getLanguagePattern(): string
     {
         $separatorQuoted = preg_quote($this->separator, '/');
         $languagePart = '[a-z]{2}';
@@ -85,7 +87,7 @@ class LanguageCodeValidator
         return '/^'.$languagePart.$separatorQuoted.$countryPart.'$/';
     }
 
-    private function formatLanguageCode(string $code)
+    private function formatLanguageCode(string $code): string
     {
         $parts = explode($this->separator, $code);
         $parts[0] = strtolower($parts[0]);

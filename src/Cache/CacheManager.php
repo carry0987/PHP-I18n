@@ -6,18 +6,20 @@ use carry0987\I18n\Exception\IOException;
 
 class CacheManager
 {
-    private $languageData;
+    private array $languageData;
 
     public function __construct()
     {
     }
 
-    public function setLanguageData(array $data)
+    public function setLanguageData(array $data): self
     {
         $this->languageData = $data;
+
+        return $this;
     }
 
-    public function isCacheValid(string $directory, string $cacheFile)
+    public function isCacheValid(string $directory, string $cacheFile): bool
     {
         if (!file_exists($cacheFile)) {
             return false;
@@ -34,7 +36,7 @@ class CacheManager
         return true;
     }
 
-    public function generateCache(string $cacheFileName)
+    public function generateCache(string $cacheFileName): void
     {
         if (!I18n::makePath(dirname($cacheFileName))) {
             throw new IOException('Unable to create cache directory for file {'.$cacheFileName.'}.');

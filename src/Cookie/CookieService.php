@@ -6,9 +6,9 @@ use carry0987\I18n\Language\LanguageCodeValidator;
 
 class CookieService
 {
-    private $defaultLang;
-    private $languageCodeValidator;
-    private static $cookieConfig;
+    private string $defaultLang;
+    private LanguageCodeValidator $languageCodeValidator;
+    private static array $cookieConfig;
 
     public function __construct(Config $config)
     {
@@ -17,7 +17,7 @@ class CookieService
         $this->languageCodeValidator = new LanguageCodeValidator($config);
     }
 
-    public function getLanguageFromCookie()
+    public function getLanguageFromCookie(): string
     {
         $language = $this->defaultLang;
 
@@ -34,7 +34,7 @@ class CookieService
         return $language;
     }
 
-    private function setLanguageCookie(string $lang)
+    private function setLanguageCookie(string $lang): bool
     {
         $config = self::$cookieConfig;
 
