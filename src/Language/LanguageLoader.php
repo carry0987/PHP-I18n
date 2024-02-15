@@ -8,8 +8,8 @@ use carry0987\I18n\Exception\IOException;
 
 class LanguageLoader
 {
-    private string $langFilePath;
-    private string $cachePath;
+    private ?string $langFilePath;
+    private ?string $cachePath;
     private array $allowedFiles;
     private array $languageData = [];
     private static string $currentLang;
@@ -18,7 +18,7 @@ class LanguageLoader
     {
         $this->langFilePath = $config->getOptions('langFilePath');
         $this->cachePath = $config->getOptions('cachePath');
-        $this->allowedFiles = $config->getOptions('allowedFiles');
+        $this->allowedFiles = $config->getOptions('allowedFiles') ?? [];
     }
 
     public function setCurrentLang(string $lang): self
