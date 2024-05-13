@@ -96,7 +96,9 @@ class LanguageLoader
         } elseif (file_exists($filePath)) {
             // If the language file has not been loaded yet, load it now and extract the translation
             $this->loadLanguageFile($filePath, $fileKey);
-            return $this->languageData[$fileKey][$translationKey] ?? null;
+            if (isset($this->languageData[$fileKey][$translationKey])) {
+                return $this->languageData[$fileKey][$translationKey];
+            }
         }
 
         // If the file does not exist or the key does not exist, throw an error
