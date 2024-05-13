@@ -4,7 +4,7 @@
     "keywords": ["i18n", "php-i18n", "language"],
     "type": "library",
     "require": {
-        "php": ">=8.0"
+        "php": ">=7.4"
     },
     "license": "MIT",
     "autoload": {
