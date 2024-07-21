@@ -28,7 +28,7 @@ class Config
     );
     private static $config = array();
 
-    public static function setOptions(array $options): void
+    public function setOptions(array $options): void
     {
         $options = array_merge(self::$defaultOptions, $options);
         self::$config['useAutoDetect'] = $options['useAutoDetect'];
@@ -44,13 +44,14 @@ class Config
         if (!empty($options['cookie'])) {
             self::$config['cookie'] = self::setCookieConfig($options['cookie']);
         }
+
         // Make sure separator is a single character
         if (strlen(self::$config['separator']) != 1) {
             throw new InvalidLanguageCodeException('Invalid separator. It must be a single character.');
         }
     }
 
-    public static function getOptions(string $key = null, mixed $default = null): mixed
+    public function getOptions(string $key = null, mixed $default = null): mixed
     {
         if ($key) {
             return self::$config[$key] ?? $default;
