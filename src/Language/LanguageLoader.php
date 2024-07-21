@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace carry0987\I18n\Language;
 
-use carry0987\I18n\I18n;
 use carry0987\I18n\Config\Config;
 use carry0987\I18n\Cache\CacheManager;
 use carry0987\I18n\Exception\IOException;
+use carry0987\Utils\Utils;
 
 class LanguageLoader
 {
@@ -48,14 +50,14 @@ class LanguageLoader
 
     public function loadLanguageData(): void
     {
-        $directory = $this->langFilePath.I18n::DIR_SEP.self::$currentLang;
+        $directory = $this->langFilePath.Utils::DIR_SEP.self::$currentLang;
         if (!is_dir($directory)) {
             throw new IOException('Language folder does not exist: {'.$directory.'}');
         }
 
         if ($this->cachePath) {
             $cacheManager = new CacheManager();
-            $cacheFile = $this->cachePath.I18n::DIR_SEP.self::$currentLang.'.php';
+            $cacheFile = $this->cachePath.Utils::DIR_SEP.self::$currentLang.'.php';
             if ($cacheManager->isCacheValid($directory, $cacheFile)) {
                 $this->languageData = include $cacheFile;
             } else {
@@ -89,7 +91,7 @@ class LanguageLoader
         $translationKey = implode('.', $keys); // Combine the remaining key path
 
         // Try to load the language data for the corresponding file first
-        $filePath = $this->langFilePath.I18n::DIR_SEP.$lang.I18n::DIR_SEP.$fileKey.'.json';
+        $filePath = $this->langFilePath.Utils::DIR_SEP.$lang.Utils::DIR_SEP.$fileKey.'.json';
         if (isset($this->languageData[$fileKey], $this->languageData[$fileKey][$translationKey])) {
             // If the language data has already been loaded, get the translation directly from the data structure
             return $this->languageData[$fileKey][$translationKey];
@@ -111,8 +113,8 @@ class LanguageLoader
         if (empty($fileList)) {
             if (empty($this->allowedFiles)) {
                 // Load all files in the language directory
-                $directory = $this->langFilePath.I18n::DIR_SEP.self::$currentLang;
-                $files = glob($directory.I18n::DIR_SEP.'*.json');
+                $directory = $this->langFilePath.Utils::DIR_SEP.self::$currentLang;
+                $files = glob($directory.Utils::DIR_SEP.'*.json');
                 foreach ($files as $file) {
                     $fileName = basename($file, '.json');
                     $fileList[] = $fileName;
@@ -128,7 +130,7 @@ class LanguageLoader
 
         $allData = [];
         foreach ($fileList as $fileName) {
-            $filePath = $this->langFilePath.I18n::DIR_SEP.self::$currentLang.I18n::DIR_SEP.$fileName.'.json';
+            $filePath = $this->langFilePath.Utils::DIR_SEP.self::$currentLang.Utils::DIR_SEP.$fileName.'.json';
             if (isset($this->languageData[$fileName])) {
                 // If the language data has already been loaded, use it directly
                 $allData[$fileName] = $this->languageData[$fileName];
@@ -147,8 +149,8 @@ class LanguageLoader
 
     private function loadAllLanguageFiles(): void
     {
-        $directory = $this->langFilePath.I18n::DIR_SEP.self::$currentLang;
-        $files = glob($directory.I18n::DIR_SEP.'*.json');
+        $directory = $this->langFilePath.Utils::DIR_SEP.self::$currentLang;
+        $files = glob($directory.Utils::DIR_SEP.'*.json');
         foreach ($files as $file) {
             $fileName = basename($file, '.json');
             if (substr_count($fileName, '.') > 0) {

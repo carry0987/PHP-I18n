@@ -1,5 +1,4 @@
 
 .DS_Store
 cache/*.php
-vendor/*
-composer.lock
+/vendor/

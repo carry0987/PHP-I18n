@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace carry0987\I18n\Config;
 
-use carry0987\I18n\I18n;
 use carry0987\I18n\Exception\InvalidLanguageCodeException;
+use carry0987\Utils\Utils;
 
 class Config
 {
@@ -31,8 +33,8 @@ class Config
         $options = array_merge(self::$defaultOptions, $options);
         self::$config['useAutoDetect'] = $options['useAutoDetect'];
         self::$config['defaultLang'] = $options['defaultLang'];
-        self::$config['langFilePath'] = isset($options['langFilePath']) ? I18n::trimPath($options['langFilePath']) : null;
-        self::$config['cachePath'] = isset($options['cachePath']) ? I18n::trimPath($options['cachePath']) : null;
+        self::$config['langFilePath'] = isset($options['langFilePath']) ? Utils::trimPath($options['langFilePath']) : null;
+        self::$config['cachePath'] = isset($options['cachePath']) ? Utils::trimPath($options['cachePath']) : null;
         self::$config['separator'] = $options['separator'];
         self::$config['autoSearch'] = $options['autoSearch'];
         self::$config['countryCodeUpperCase'] = $options['countryCodeUpperCase'];

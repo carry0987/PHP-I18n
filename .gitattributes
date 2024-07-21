@@ -1,3 +1,5 @@
+# exclude files from the generated tarball
+.git* export-ignore
 cache/ export-ignore
 lang/ export-ignore
 example.php export-ignore

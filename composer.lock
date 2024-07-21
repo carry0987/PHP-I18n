@@ -1,0 +1,60 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "dbe72820130959bca988bec187156a8b",
+    "packages": [
+        {
+            "name": "carry0987/utils",
+            "version": "1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/carry0987/PHP-Utils.git",
+                "reference": "ed5ff6e6e46f5fb879889a4d9e92d5b988dbebfb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/carry0987/PHP-Utils/zipball/ed5ff6e6e46f5fb879889a4d9e92d5b988dbebfb",
+                "reference": "ed5ff6e6e46f5fb879889a4d9e92d5b988dbebfb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "carry0987\\Utils\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "carry0987"
+                }
+            ],
+            "description": "This Utils library provides a collection of static methods designed to help in various common tasks encountered in PHP development. From manipulating arrays and strings to handling date-time conversions and file paths, this library aims to be a handy tool for PHP developers.",
+            "support": {
+                "issues": "https://github.com/carry0987/PHP-Utils/issues",
+                "source": "https://github.com/carry0987/PHP-Utils/tree/1.0.8"
+            },
+            "time": "2024-07-21T14:28:24+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.0"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}

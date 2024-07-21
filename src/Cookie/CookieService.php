@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace carry0987\I18n\Cookie;
 
 use carry0987\I18n\Config\Config;

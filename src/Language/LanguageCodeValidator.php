@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace carry0987\I18n\Language;
 
-use carry0987\I18n\I18n;
 use carry0987\I18n\Config\Config;
 use carry0987\I18n\Exception\IOException;
 use carry0987\I18n\Exception\InvalidLanguageCodeException;
+use carry0987\Utils\Utils;
 
 class LanguageCodeValidator
 {
@@ -66,7 +68,7 @@ class LanguageCodeValidator
             throw new IOException('Language directory does not exist: {'.$langDir.'}');
         }
 
-        $directories = glob($langDir.I18n::DIR_SEP.'*', GLOB_ONLYDIR);
+        $directories = glob($langDir.Utils::DIR_SEP.'*', GLOB_ONLYDIR);
         $langList = [];
         foreach ($directories as $dir) {
             $langCode = basename($dir);

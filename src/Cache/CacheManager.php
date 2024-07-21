@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace carry0987\I18n\Cache;
 
-use carry0987\I18n\I18n;
 use carry0987\I18n\Exception\IOException;
+use carry0987\Utils\Utils;
 
 class CacheManager
 {
@@ -26,7 +28,7 @@ class CacheManager
         }
 
         $cachedTime = filemtime($cacheFile);
-        $files = glob($directory.I18n::DIR_SEP.'*.json');
+        $files = glob($directory.Utils::DIR_SEP.'*.json');
         foreach ($files as $file) {
             if (filemtime($file) > $cachedTime) {
                 return false;
@@ -38,7 +40,7 @@ class CacheManager
 
     public function generateCache(string $cacheFileName): void
     {
-        if (!I18n::makePath(dirname($cacheFileName))) {
+        if (!Utils::makePath(dirname($cacheFileName))) {
             throw new IOException('Unable to create cache directory for file {'.$cacheFileName.'}.');
         }
 
