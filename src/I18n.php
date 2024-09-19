@@ -74,7 +74,7 @@ class I18n
         return $this->fetchLangList();
     }
 
-    public function fetch(string $key): ?string
+    public function fetch(string $key, ?array $param = null): ?string
     {
         if (!$this->initialized) {
             throw new InitializationException('I18n class must be initialized before using fetch().');
@@ -84,6 +84,10 @@ class I18n
 
         if ($value === null && self::$option['autoSearch'] && $this->currentLang !== self::$option['defaultLang']) {
             $value = $this->languageLoader->getValue(self::$option['defaultLang'], $key);
+        }
+
+        if ($param !== null) {
+            $value = self::langParam($value, $param);
         }
 
         return $value;
@@ -114,6 +118,18 @@ class I18n
         }
 
         return $this->currentLang;
+    }
+
+    public static function langParam(string $value, array $param): string
+    {
+        $replacements = [];
+
+        // Construct replacement array
+        foreach ($param as $index => $p) {
+            $replacements['{' . $index . '}'] = $p; // Placeholder as key
+        }
+
+        return strtr($value, $replacements);
     }
 
     private function validateLanguageFolder(string $folder): string

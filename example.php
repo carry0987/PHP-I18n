@@ -21,12 +21,22 @@ $config = array(
     )
 );
 
+// Get current date
+$currentDate = new DateTime();
+$year = $currentDate->format('Y'); // YYYY
+$month = $currentDate->format('m'); // MM
+$day = $currentDate->format('d'); // dd
+
+// Example usage
+$params = [$year, $month, $day];
+
 try {
     $i18n = new I18n($config);
     $i18n->setLangAlias(array('en_US' => 'English', 'zh_TW' => '繁體中文'));
     echo '<h2>Fetch \'hello\' from \'greeting.json\'</h2>';
     echo $i18n->fetch('greeting.hello');
-    echo $i18n->fetch('greeting.world');
+    echo $i18n->fetch('greeting.world').'<br>';
+    echo $i18n->fetch('general.today', $params);
     echo '<h2>Fetch Current Language</h2>';
     echo $i18n->fetchCurrentLang();
     echo '<h2>Fetch List</h2>';
