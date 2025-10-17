@@ -80,13 +80,23 @@ class I18n
             throw new InitializationException('I18n class must be initialized before using fetch().');
         }
 
-        $value = $this->languageLoader->getValue($this->currentLang, $key);
-
-        if ($value === null && self::$option['autoSearch'] && $this->currentLang !== self::$option['defaultLang']) {
-            $value = $this->languageLoader->getValue(self::$option['defaultLang'], $key);
+        try {
+            $value = $this->languageLoader->getValue($this->currentLang, $key);
+        } catch (IOException $e) {
+            if (self::$option['autoSearch'] && $this->currentLang !== self::$option['defaultLang']) {
+                try {
+                    $value = $this->languageLoader->getValue(self::$option['defaultLang'], $key);
+                } catch (IOException $eDefault) {
+                    // Not found in defaultLang
+                    $value = null;
+                }
+            } else {
+                // Rethrow for strict mode
+                throw $e;
+            }
         }
 
-        if ($param !== null) {
+        if ($param !== null && $value !== null) {
             $value = self::langParam($value, $param);
         }
 
