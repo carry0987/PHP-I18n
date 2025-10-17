@@ -5,8 +5,10 @@ use carry0987\I18n\Config\Config;
 use carry0987\I18n\Language\LanguageLoader;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(LanguageLoader::class)]
+#[UsesClass(Config::class)]
 final class LanguageLoaderTest extends TestCase
 {
     public function testSetCurrentLangAndGetValue(): void

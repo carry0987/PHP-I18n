@@ -2,10 +2,19 @@
 declare(strict_types=1);
 
 use carry0987\I18n\I18n;
+use carry0987\I18n\Cache\CacheManager;
+use carry0987\I18n\Config\Config;
+use carry0987\I18n\Language\LanguageCodeValidator;
+use carry0987\I18n\Language\LanguageLoader;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(I18n::class)]
+#[UsesClass(CacheManager::class)]
+#[UsesClass(Config::class)]
+#[UsesClass(LanguageCodeValidator::class)]
+#[UsesClass(LanguageLoader::class)]
 final class I18nTest extends TestCase
 {
     public function testCanFetchTranslation(): void

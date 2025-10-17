@@ -3,10 +3,14 @@ declare(strict_types=1);
 
 use carry0987\I18n\Cookie\CookieService;
 use carry0987\I18n\Config\Config;
+use carry0987\I18n\Language\LanguageCodeValidator;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(CookieService::class)]
+#[UsesClass(Config::class)]
+#[UsesClass(LanguageCodeValidator::class)]
 final class CookieServiceTest extends TestCase
 {
     public function testGetLanguageFromCookieDefault(): void

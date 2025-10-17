@@ -5,8 +5,10 @@ use carry0987\I18n\Config\Config;
 use carry0987\I18n\Language\LanguageCodeValidator;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(LanguageCodeValidator::class)]
+#[UsesClass(Config::class)]
 final class LanguageCodeValidatorTest extends TestCase
 {
     public function testValidateLanguageCode(): void
