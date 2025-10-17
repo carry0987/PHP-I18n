@@ -1,4 +1,40 @@
-
+# =========================================
+# macOS system files
+# =========================================
 .DS_Store
-cache/*.php
+
+# =========================================
+# Composer dependencies and cache
+# =========================================
 /vendor/
+composer.lock
+composer.phar
+
+# =========================================
+# PHPUnit test results and cache
+# =========================================
+.phpunit.cache/
+build/
+coverage.xml
+coverage/
+clover.xml
+
+# =========================================
+# IDE and editor settings
+# =========================================
+.vscode/
+.idea/
+*.iml
+
+# =========================================
+# Temporary files and logs
+# =========================================
+.cache/
+logs/
+tmp/
+*.log
+
+# =========================================
+# Environment and configuration files
+# =========================================
+.env

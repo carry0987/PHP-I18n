@@ -6,7 +6,7 @@ use carry0987\I18n\I18n;
 $config = array(
     'useAutoDetect' => true,
     'langFilePath' => 'lang',
-    'cachePath' => 'cache',
+    'cachePath' => '.cache',
     'defaultLang' => 'en_US',
     'separator' => '_',
     'autoSearch' => true,

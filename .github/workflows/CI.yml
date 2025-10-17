@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+    paths:
+      - "composer.*"
+      - "src/**"
+      - "tests/**"
+      - "phpunit.xml*"
+      - ".github/workflows/**"
+      - "lang/**"
+  pull_request:
+    branches: [ "**" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COMPOSER_ALLOW_SUPERUSER: 1
+  COMPOSER_NO_INTERACTION: 1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: "8.3"
+            coverage: false
+          - php: "8.4"
+            coverage: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        env:
+          XDEBUG_MODE: coverage
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: ${{ matrix.coverage == true && 'xdebug' || 'none' }}
+          tools: composer:v2
+          extensions: mbstring, intl
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: composer-${{ runner.os }}-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.php }}-
+        env:
+          COMPOSER_CACHE_DIR: ${{ github.workspace }}/.composer-cache
+
+      - name: Install dependencies
+        run: |
+          if [ -f composer.lock ]; then
+            composer install --prefer-dist --no-progress
+          else
+            composer update --prefer-dist --no-progress
+          fi
+
+      - name: PHP syntax check
+        run: |
+          find src -type f -name "*.php" -print0 | xargs -0 -n1 -P4 php -l
+
+      - name: Run PHPUnit
+        run: |
+          if [ "${{ matrix.coverage }}" == "true" ]; then
+            mkdir -p build/logs
+            vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+          else
+            vendor/bin/phpunit --no-coverage
+          fi
+
+      - name: Upload coverage
+        if: ${{ matrix.coverage == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-php${{ matrix.php }}
+          path: build/logs/clover.xml
