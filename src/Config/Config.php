@@ -51,7 +51,7 @@ class Config
         }
     }
 
-    public function getOptions(string $key = null, mixed $default = null): mixed
+    public function getOptions(?string $key = null, mixed $default = null): mixed
     {
         if ($key) {
             return self::$config[$key] ?? $default;

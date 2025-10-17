@@ -8,20 +8,23 @@
     "packages": [
         {
             "name": "carry0987/utils",
-            "version": "1.0.9",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carry0987/PHP-Utils.git",
-                "reference": "769c75d9b40bb1fa01a3bbc2070b9e0d19296ca4"
+                "reference": "4a04aa7c08c780631311f897281c8c17523daf86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carry0987/PHP-Utils/zipball/769c75d9b40bb1fa01a3bbc2070b9e0d19296ca4",
-                "reference": "769c75d9b40bb1fa01a3bbc2070b9e0d19296ca4",
+                "url": "https://api.github.com/repos/carry0987/PHP-Utils/zipball/4a04aa7c08c780631311f897281c8c17523daf86",
+                "reference": "4a04aa7c08c780631311f897281c8c17523daf86",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^12.4"
             },
             "type": "library",
             "autoload": {
@@ -41,9 +44,9 @@
             "description": "This Utils library provides a collection of static methods designed to help in various common tasks encountered in PHP development. From manipulating arrays and strings to handling date-time conversions and file paths, this library aims to be a handy tool for PHP developers.",
             "support": {
                 "issues": "https://github.com/carry0987/PHP-Utils/issues",
-                "source": "https://github.com/carry0987/PHP-Utils/tree/1.0.9"
+                "source": "https://github.com/carry0987/PHP-Utils/tree/1.1.0"
             },
-            "time": "2024-07-21T14:52:46+00:00"
+            "time": "2025-10-17T05:28:34+00:00"
         }
     ],
     "packages-dev": [],

@@ -44,7 +44,7 @@ class I18n
         return $this;
     }
 
-    public function initialize(string $language = null): void
+    public function initialize(?string $language = null): void
     {
         if ($this->initialized) {
             throw new InitializationException('The I18n class has already been initialized');
